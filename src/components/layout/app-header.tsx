@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -128,12 +129,14 @@ export function AppHeader() {
           }
         />
         <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuLabel>
-            <p className="text-sm font-medium">{user?.name}</p>
-            <p className="text-xs font-normal text-muted-foreground">
-              {user?.email}
-            </p>
-          </DropdownMenuLabel>
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>
+              <p className="text-sm font-medium">{user?.name}</p>
+              <p className="text-xs font-normal text-muted-foreground">
+                {user?.email}
+              </p>
+            </DropdownMenuLabel>
+          </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem render={<Link href="/settings" />}>
             <UserIcon className="mr-2 h-4 w-4" /> Profile & Settings
