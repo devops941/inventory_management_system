@@ -310,7 +310,9 @@ export default function UsersPage() {
                 onValueChange={(v) => setForm({ ...form, roleId: v ?? "" })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select role" />
+                  <SelectValue placeholder="Select role">
+                    {roles.find((r) => r.id === form.roleId)?.name}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {roles.map((r) => (
@@ -328,7 +330,9 @@ export default function UsersPage() {
                 onValueChange={(v) => setForm({ ...form, status: v ?? "active" })}
               >
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue>
+                    {form.status === "active" ? "Active" : form.status === "blocked" ? "Blocked" : form.status}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="active">Active</SelectItem>

@@ -208,7 +208,9 @@ export function CrudManager<T extends { id: string }>({
                     onValueChange={(v) => setForm({ ...form, [f.name]: v ?? "" })}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder={`Select ${f.label.toLowerCase()}`} />
+                      <SelectValue placeholder={`Select ${f.label.toLowerCase()}`}>
+                        {(f.options ?? []).find((o) => o.value === form[f.name])?.label}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {(f.options ?? []).map((o) => (

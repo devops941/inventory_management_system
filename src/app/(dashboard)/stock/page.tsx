@@ -384,7 +384,9 @@ export default function StockPage() {
                 onValueChange={(v) => setForm({ ...form, productId: v ?? "" })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select product" />
+                  <SelectValue placeholder="Select product">
+                    {products.find((p) => p.id === form.productId)?.name}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {products.map((p) => (
@@ -402,7 +404,9 @@ export default function StockPage() {
                 onValueChange={(v) => setForm({ ...form, warehouseId: v ?? "" })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select warehouse" />
+                  <SelectValue placeholder="Select warehouse">
+                    {warehouses.find((w) => w.id === form.warehouseId)?.name}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {warehouses.map((w) => (
@@ -421,7 +425,9 @@ export default function StockPage() {
                   onValueChange={(v) => setForm({ ...form, toWarehouseId: v ?? "" })}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select warehouse" />
+                    <SelectValue placeholder="Select warehouse">
+                      {warehouses.find((w) => w.id === form.toWarehouseId)?.name}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     {warehouses.map((w) => (
