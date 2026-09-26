@@ -100,7 +100,7 @@ const PIE_COLORS = [
 ];
 
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const { user, can } = useAuth();
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -326,26 +326,41 @@ export default function DashboardPage() {
                 No purchase orders yet.
               </p>
             ) : (
-              data.recentPurchases.map((o) => (
-                <Link
-                  key={o.id}
-                  href={`/purchases/${o.id}`}
-                  className="flex items-center justify-between gap-3 border-b pb-2 last:border-0 last:pb-0"
-                >
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">{o.orderNumber}</p>
-                    <p className="truncate text-xs text-muted-foreground">
-                      {o.supplier?.name} &middot; {formatDate(o.orderDate)}
-                    </p>
+              data.recentPurchases.map((o) => {
+                const canView = can("purchases");
+                const content = (
+                  <>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium">{o.orderNumber}</p>
+                      <p className="truncate text-xs text-muted-foreground">
+                        {o.supplier?.name} &middot; {formatDate(o.orderDate)}
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-end gap-1">
+                      <span className="text-sm font-semibold">
+                        {formatCurrency(o.total)}
+                      </span>
+                      <StatusBadge value={o.status} />
+                    </div>
+                  </>
+                );
+                return canView ? (
+                  <Link
+                    key={o.id}
+                    href={`/purchases/${o.id}`}
+                    className="flex items-center justify-between gap-3 border-b pb-2 last:border-0 last:pb-0 hover:bg-muted/50 rounded-sm p-1 transition-colors"
+                  >
+                    {content}
+                  </Link>
+                ) : (
+                  <div
+                    key={o.id}
+                    className="flex items-center justify-between gap-3 border-b pb-2 last:border-0 last:pb-0 p-1"
+                  >
+                    {content}
                   </div>
-                  <div className="flex flex-col items-end gap-1">
-                    <span className="text-sm font-semibold">
-                      {formatCurrency(o.total)}
-                    </span>
-                    <StatusBadge value={o.status} />
-                  </div>
-                </Link>
-              ))
+                );
+              })
             )}
           </CardContent>
         </Card>
@@ -361,26 +376,41 @@ export default function DashboardPage() {
                 No sales orders yet.
               </p>
             ) : (
-              data.recentSales.map((o) => (
-                <Link
-                  key={o.id}
-                  href={`/sales/${o.id}`}
-                  className="flex items-center justify-between gap-3 border-b pb-2 last:border-0 last:pb-0"
-                >
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">{o.orderNumber}</p>
-                    <p className="truncate text-xs text-muted-foreground">
-                      {o.customer?.name} &middot; {formatDate(o.orderDate)}
-                    </p>
+              data.recentSales.map((o) => {
+                const canView = can("sales");
+                const content = (
+                  <>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium">{o.orderNumber}</p>
+                      <p className="truncate text-xs text-muted-foreground">
+                        {o.customer?.name} &middot; {formatDate(o.orderDate)}
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-end gap-1">
+                      <span className="text-sm font-semibold">
+                        {formatCurrency(o.total)}
+                      </span>
+                      <StatusBadge value={o.status} />
+                    </div>
+                  </>
+                );
+                return canView ? (
+                  <Link
+                    key={o.id}
+                    href={`/sales/${o.id}`}
+                    className="flex items-center justify-between gap-3 border-b pb-2 last:border-0 last:pb-0 hover:bg-muted/50 rounded-sm p-1 transition-colors"
+                  >
+                    {content}
+                  </Link>
+                ) : (
+                  <div
+                    key={o.id}
+                    className="flex items-center justify-between gap-3 border-b pb-2 last:border-0 last:pb-0 p-1"
+                  >
+                    {content}
                   </div>
-                  <div className="flex flex-col items-end gap-1">
-                    <span className="text-sm font-semibold">
-                      {formatCurrency(o.total)}
-                    </span>
-                    <StatusBadge value={o.status} />
-                  </div>
-                </Link>
-              ))
+                );
+              })
             )}
           </CardContent>
         </Card>
