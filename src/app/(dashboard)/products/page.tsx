@@ -330,7 +330,9 @@ export default function ProductsPage() {
           <>
             <Select value={categoryFilter} onValueChange={(v) => setCategoryFilter(v ?? "all")}>
               <SelectTrigger className="w-44">
-                <SelectValue placeholder="All categories" />
+                <SelectValue placeholder="All categories">
+                  {categoryFilter === "all" ? "All categories" : categories.find((c) => c.id === categoryFilter)?.name}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All categories</SelectItem>
@@ -393,7 +395,9 @@ export default function ProductsPage() {
                 onValueChange={(v) => setForm({ ...form, categoryId: v ?? "" })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
+                  <SelectValue placeholder="Select category">
+                    {categories.find((c) => c.id === form.categoryId)?.name}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((c) => (
@@ -413,7 +417,9 @@ export default function ProductsPage() {
                 }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select supplier" />
+                  <SelectValue placeholder="Select supplier">
+                    {form.supplierId ? suppliers.find((s) => s.id === form.supplierId)?.name : "None"}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">None</SelectItem>
@@ -434,7 +440,9 @@ export default function ProductsPage() {
                 }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select warehouse" />
+                  <SelectValue placeholder="Select warehouse">
+                    {form.warehouseId ? warehouses.find((w) => w.id === form.warehouseId)?.name : "None"}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">None</SelectItem>

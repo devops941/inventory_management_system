@@ -193,7 +193,11 @@ export function OrderBuilder({ mode }: { mode: "purchase" | "sale" }) {
                       onValueChange={(v) => pickProduct(line.key, v ?? "")}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select product" />
+                        <SelectValue placeholder="Select product">
+                          {products.find((p) => p.id === line.productId)
+                            ? `${products.find((p) => p.id === line.productId)?.name} (${products.find((p) => p.id === line.productId)?.sku})`
+                            : ""}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         {products.map((p) => (
@@ -290,7 +294,9 @@ export function OrderBuilder({ mode }: { mode: "purchase" | "sale" }) {
                 </Label>
                 <Select value={partyId} onValueChange={(v) => setPartyId(v ?? "")}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select" />
+                    <SelectValue placeholder="Select">
+                      {parties.find((p) => p.id === partyId)?.name}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     {parties.map((p) => (
@@ -305,7 +311,9 @@ export function OrderBuilder({ mode }: { mode: "purchase" | "sale" }) {
                 <Label className="text-xs">Warehouse</Label>
                 <Select value={warehouseId} onValueChange={(v) => setWarehouseId(v ?? "")}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select warehouse" />
+                    <SelectValue placeholder="Select warehouse">
+                      {warehouses.find((w) => w.id === warehouseId)?.name}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     {warehouses.map((w) => (
@@ -320,7 +328,19 @@ export function OrderBuilder({ mode }: { mode: "purchase" | "sale" }) {
                 <Label className="text-xs">Status</Label>
                 <Select value={status} onValueChange={(v) => setStatus(v ?? "pending")}>
                   <SelectTrigger>
-                    <SelectValue />
+                    <SelectValue>
+                      {status === "pending"
+                        ? "Pending"
+                        : status === "approved"
+                          ? "Approved"
+                          : status === "received"
+                            ? "Received (updates stock)"
+                            : status === "confirmed"
+                              ? "Confirmed"
+                              : status === "issued"
+                                ? "Issued (deducts stock)"
+                                : status}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="pending">Pending</SelectItem>
