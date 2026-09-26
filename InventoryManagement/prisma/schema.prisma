@@ -1,0 +1,302 @@
+// Inventory Management System - Prisma schema (MongoDB)
+// All tables from the project overview are modelled here and are accessed
+// exclusively through the Next.js API Routes.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Users & Roles
+// ---------------------------------------------------------------------------
+model Role {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   @unique
+  description String?
+  permissions String[] @default([])
+  users       User[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("roles")
+}
+
+model User {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  email        String   @unique
+  password     String
+  phone        String?
+  avatar       String?
+  status       String   @default("active") // active | blocked
+  roleId       String?  @db.ObjectId
+  role         Role?    @relation(fields: [roleId], references: [id], onDelete: SetNull)
+  lastLogin    DateTime?
+  resetToken   String?
+  resetExpires DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  purchaseOrders   PurchaseOrder[]
+  salesOrders      SalesOrder[]
+  stockMovements   StockMovement[]
+  notifications    Notification[]
+
+  @@map("users")
+}
+
+// ---------------------------------------------------------------------------
+// Catalogue: categories, products, warehouses
+// ---------------------------------------------------------------------------
+model Category {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   @unique
+  description String?
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  products Product[]
+
+  @@map("categories")
+}
+
+model Warehouse {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String   @unique
+  code      String?  @unique
+  address   String?
+  city      String?
+  manager   String?
+  phone     String?
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  stock           Stock[]
+  movements       StockMovement[]
+  purchaseOrders  PurchaseOrder[]
+  salesOrders     SalesOrder[]
+  products        Product[]
+
+  @@map("warehouses")
+}
+
+model Product {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  sku          String   @unique
+  barcode      String?
+  description  String?
+  unit         String   @default("pcs")
+  costPrice    Float    @default(0)
+  sellingPrice Float    @default(0)
+  reorderLevel Int      @default(0)
+  quantity     Int      @default(0)
+  image        String?
+  status       String   @default("active")
+  expiryDate   DateTime?
+  categoryId   String   @db.ObjectId
+  category     Category @relation(fields: [categoryId], references: [id])
+  supplierId   String?  @db.ObjectId
+  supplier     Supplier? @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  warehouseId  String?  @db.ObjectId
+  warehouse    Warehouse? @relation(fields: [warehouseId], references: [id], onDelete: SetNull)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  stock           Stock[]
+  stockMovements  StockMovement[]
+  purchaseItems   PurchaseItem[]
+  salesItems      SalesItem[]
+  notifications   Notification[]
+
+  @@map("products")
+}
+
+// ---------------------------------------------------------------------------
+// Suppliers & Customers
+// ---------------------------------------------------------------------------
+model Supplier {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  code          String?  @unique
+  contactPerson String?
+  email         String?
+  phone         String?
+  address       String?
+  city          String?
+  status        String   @default("active")
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  products       Product[]
+  purchaseOrders PurchaseOrder[]
+
+  @@map("suppliers")
+}
+
+model Customer {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  code      String?  @unique
+  email     String?
+  phone     String?
+  address   String?
+  city      String?
+  status    String   @default("active")
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  salesOrders SalesOrder[]
+
+  @@map("customers")
+}
+
+// ---------------------------------------------------------------------------
+// Purchases
+// ---------------------------------------------------------------------------
+model PurchaseOrder {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderNumber  String   @unique
+  supplierId   String   @db.ObjectId
+  supplier     Supplier @relation(fields: [supplierId], references: [id])
+  warehouseId  String?  @db.ObjectId
+  warehouse    Warehouse? @relation(fields: [warehouseId], references: [id], onDelete: SetNull)
+  status       String   @default("pending") // pending | approved | received | returned | cancelled
+  orderDate    DateTime @default(now())
+  expectedDate DateTime?
+  receivedDate DateTime?
+  subtotal     Float    @default(0)
+  tax          Float    @default(0)
+  discount     Float    @default(0)
+  total        Float    @default(0)
+  paidAmount   Float    @default(0)
+  notes        String?
+  createdById  String?  @db.ObjectId
+  createdBy    User?    @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  items        PurchaseItem[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("purchase_orders")
+}
+
+model PurchaseItem {
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  purchaseOrderId String        @db.ObjectId
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  productId       String        @db.ObjectId
+  product         Product       @relation(fields: [productId], references: [id])
+  quantity        Int
+  receivedQty     Int           @default(0)
+  unitCost        Float         @default(0)
+  total           Float         @default(0)
+
+  @@map("purchase_items")
+}
+
+// ---------------------------------------------------------------------------
+// Sales
+// ---------------------------------------------------------------------------
+model SalesOrder {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderNumber   String   @unique
+  customerId    String   @db.ObjectId
+  customer      Customer @relation(fields: [customerId], references: [id])
+  warehouseId   String?  @db.ObjectId
+  warehouse     Warehouse? @relation(fields: [warehouseId], references: [id], onDelete: SetNull)
+  status        String   @default("pending") // pending | confirmed | issued | cancelled | returned
+  paymentStatus String   @default("unpaid") // unpaid | partial | paid
+  orderDate     DateTime @default(now())
+  dueDate       DateTime?
+  subtotal      Float    @default(0)
+  tax           Float    @default(0)
+  discount      Float    @default(0)
+  total         Float    @default(0)
+  paidAmount    Float    @default(0)
+  notes         String?
+  createdById   String?  @db.ObjectId
+  createdBy     User?    @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  items         SalesItem[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("sales_orders")
+}
+
+model SalesItem {
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  salesOrderId String     @db.ObjectId
+  salesOrder   SalesOrder @relation(fields: [salesOrderId], references: [id], onDelete: Cascade)
+  productId    String     @db.ObjectId
+  product      Product    @relation(fields: [productId], references: [id])
+  quantity     Int
+  unitPrice    Float      @default(0)
+  total        Float      @default(0)
+
+  @@map("sales_items")
+}
+
+// ---------------------------------------------------------------------------
+// Stock
+// ---------------------------------------------------------------------------
+model Stock {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  productId   String    @db.ObjectId
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  warehouseId String    @db.ObjectId
+  warehouse   Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  quantity    Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([productId, warehouseId])
+  @@map("stock")
+}
+
+model StockMovement {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  productId   String    @db.ObjectId
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  warehouseId String?   @db.ObjectId
+  warehouse   Warehouse? @relation(fields: [warehouseId], references: [id], onDelete: SetNull)
+  type        String // IN | OUT | ADJUSTMENT | TRANSFER_IN | TRANSFER_OUT
+  quantity    Int
+  balance     Int       @default(0)
+  reference   String?
+  referenceType String? // purchase | sale | adjustment | transfer | return
+  note        String?
+  createdById String?   @db.ObjectId
+  createdBy   User?     @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  createdAt   DateTime  @default(now())
+
+  @@map("stock_movements")
+}
+
+// ---------------------------------------------------------------------------
+// Notifications
+// ---------------------------------------------------------------------------
+model Notification {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  type      String   @default("info") // low_stock | expiry | order | info
+  title     String
+  message   String
+  severity  String   @default("info") // info | warning | critical | success
+  isRead    Boolean  @default(false)
+  link      String?
+  productId String?  @db.ObjectId
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  userId    String?  @db.ObjectId
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+
+  @@map("notifications")
+}
