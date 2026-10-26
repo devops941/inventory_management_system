@@ -82,19 +82,32 @@ export function StatCard({
     warning: "text-amber-600",
     danger: "text-red-600",
   };
+  const iconTones = {
+    default: "bg-primary/10 text-primary",
+    success: "bg-emerald-500/10 text-emerald-600",
+    warning: "bg-amber-500/10 text-amber-600",
+    danger: "bg-red-500/10 text-red-600",
+  };
   return (
-    <Card>
+    <Card className="transition-all duration-200 hover:border-primary/30 hover:shadow-md hover:shadow-primary/5">
       <CardContent className="flex items-start justify-between gap-4 p-5">
         <div className="min-w-0">
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
             {label}
           </p>
-          <p className={cn("mt-1 text-2xl font-semibold", tones[tone])}>{value}</p>
+          <p className={cn("mt-1 text-2xl font-semibold tabular-nums", tones[tone])}>
+            {value}
+          </p>
           {hint && <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
         </div>
         {Icon && (
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
-            <Icon className="h-5 w-5 text-muted-foreground" />
+          <div
+            className={cn(
+              "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl",
+              iconTones[tone]
+            )}
+          >
+            <Icon className="h-5 w-5" />
           </div>
         )}
       </CardContent>

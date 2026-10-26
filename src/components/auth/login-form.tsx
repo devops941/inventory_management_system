@@ -68,8 +68,12 @@ export function LoginForm() {
 
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
-      <div className="hidden flex-col justify-between bg-primary p-10 text-primary-foreground lg:flex">
-        <div className="flex items-center gap-3">
+      <div className="relative hidden flex-col justify-between overflow-hidden bg-gradient-to-br from-primary to-[oklch(0.40_0.17_280)] p-10 text-primary-foreground lg:flex">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full bg-primary-foreground/10 blur-3xl"
+        />
+        <div className="relative z-10 flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-foreground/15">
             <Boxes className="h-6 w-6" />
           </div>
@@ -80,7 +84,7 @@ export function LoginForm() {
             </p>
           </div>
         </div>
-        <div className="space-y-4">
+        <div className="relative z-10 space-y-4">
           <h2 className="text-3xl font-semibold leading-tight">
             Real-time stock, purchases and sales in one place.
           </h2>
@@ -92,13 +96,13 @@ export function LoginForm() {
             <li>&bull; Reports with Excel and PDF export</li>
           </ul>
         </div>
-        <p className="text-xs text-primary-foreground/60">
+        <p className="relative z-10 text-xs text-primary-foreground/60">
           Role-based access for Admin, Inventory Manager, Purchase Staff and Sales Staff.
         </p>
       </div>
 
       <div className="flex items-center justify-center p-6">
-        <Card className="w-full max-w-md">
+        <Card className="w-full max-w-md border-border/70 shadow-xl shadow-primary/5">
           <CardHeader>
             <CardTitle className="text-2xl">Sign in</CardTitle>
             <CardDescription>

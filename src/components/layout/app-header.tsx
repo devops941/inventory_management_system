@@ -71,7 +71,7 @@ export function AppHeader() {
     .toUpperCase();
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/70 lg:px-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b bg-background/80 px-4 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 lg:px-6">
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger
           render={
@@ -81,18 +81,24 @@ export function AppHeader() {
             </Button>
           }
         />
-        <SheetContent side="left" className="w-64 p-0">
-          <div className="flex h-16 items-center border-b px-4 font-semibold">
-            IMS
+        <SheetContent side="left" className="w-64 bg-sidebar p-0">
+          <div className="flex h-16 items-center gap-2.5 border-b border-sidebar-border px-5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-sm font-bold text-primary-foreground">
+              IM
+            </div>
+            <span className="font-semibold tracking-tight">Inventory MS</span>
           </div>
           <SidebarNav onNavigate={() => setOpen(false)} />
         </SheetContent>
       </Sheet>
 
       <div className="flex-1">
-        <h1 className="text-lg font-semibold tracking-tight">
+        <h1 className="text-base font-semibold tracking-tight lg:text-lg">
           {TITLES[section] ?? "Inventory"}
         </h1>
+        <p className="hidden text-xs text-muted-foreground sm:block">
+          {user?.role ? `Signed in as ${user.role}` : "Inventory Management System"}
+        </p>
       </div>
 
       <Button
