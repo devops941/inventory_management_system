@@ -50,15 +50,17 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
-      <aside className="hidden w-64 shrink-0 border-r bg-background lg:block">
-        <div className="flex h-16 items-center gap-2 border-b px-5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-sm font-bold text-primary-foreground">
+    <div className="flex min-h-screen bg-muted/40">
+      <aside className="hidden w-64 shrink-0 border-r border-sidebar-border bg-sidebar lg:block">
+        <div className="flex h-16 items-center gap-2.5 border-b border-sidebar-border px-5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-sm font-bold text-primary-foreground shadow-sm shadow-primary/30">
             IM
           </div>
           <div>
-            <p className="text-sm font-semibold leading-tight">Inventory MS</p>
-            <p className="text-[11px] text-muted-foreground">Full-stack Next.js</p>
+            <p className="text-sm font-semibold leading-tight tracking-tight">
+              Inventory MS
+            </p>
+            <p className="text-[11px] text-muted-foreground">Management Suite</p>
           </div>
         </div>
         <div className="sticky top-16 max-h-[calc(100vh-4rem)] overflow-y-auto">
@@ -68,7 +70,9 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
       <div className="flex min-w-0 flex-1 flex-col">
         <AppHeader />
-        <main className="flex-1 p-4 lg:p-6">{children}</main>
+        <main className="flex-1 p-4 lg:p-6">
+          <div className="mx-auto w-full max-w-7xl">{children}</div>
+        </main>
       </div>
     </div>
   );
